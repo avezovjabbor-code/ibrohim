@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supercar Highway Racer - Mashina Poygasi</title>
+    <link rel="stylesheet" href="car.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
+</head>
+<body>
+
+    <!-- Header & Navigatsiya -->
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">🏎️</span>
+            <div class="logo-title">
+                <h1>NITRO HIGHWAY</h1>
+                <p>Tezkor Trassa Poygasi & Superkarlar</p>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <a href="football.html" class="btn-nav btn-football" title="Futbol o'yiniga o'tish">
+                ⚽ Futbol O'yini
+            </a>
+            <button class="btn-nav" id="btnGarage" title="Garaj - Mashina tanlash">
+                🚗 Garaj
+            </button>
+            <button class="btn-nav" id="btnSound" title="Ovoz">
+                🔊 Ovoz: Yoqilgan
+            </button>
+            <button class="btn-nav" id="btnFullscreen" title="To'liq ekran">
+                ⛶ To'liq ekran
+            </button>
+        </div>
+    </header>
+
+    <!-- Asboblar paneli (HUD Bar) -->
+    <div class="hud-bar">
+        <!-- Tezlik -->
+        <div class="hud-item">
+            <div class="hud-label">
+                <span>TEZLIK</span>
+                <span class="hud-unit">KM/H</span>
+            </div>
+            <div class="hud-val">
+                <span id="hudSpeed">0</span>
+            </div>
+            <div class="meter-bg">
+                <div class="meter-fill fill-nitro" id="barNitro" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Masofa -->
+        <div class="hud-item">
+            <div class="hud-label">
+                <span>MASOFA</span>
+                <span class="hud-unit">KM</span>
+            </div>
+            <div class="hud-val">
+                <span id="hudDistance">0.00</span>
+            </div>
+            <div class="meter-bg">
+                <div class="meter-fill fill-health" id="barHealth" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Tangalar -->
+        <div class="hud-item">
+            <div class="hud-label">
+                <span>TANGALAR</span>
+                <span class="hud-unit">🪙</span>
+            </div>
+            <div class="hud-val">
+                <span id="hudCoins">0</span>
+            </div>
+        </div>
+
+        <!-- Ball & Combo -->
+        <div class="hud-item">
+            <div class="hud-label">
+                <span>HISOB (SCORE)</span>
+                <span class="combo-badge" id="comboBadge">🔥 x1 COMBO</span>
+            </div>
+            <div class="hud-val">
+                <span id="hudScore">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- O'yin Maydoni (Canvas) -->
+    <div class="canvas-container">
+        <canvas id="racingCanvas"></canvas>
+
+        <!-- Tezkor ogohlantirish (Close Call / To'qnashuv) -->
+        <div class="overlay-alert" id="overlayAlert">
+            ⚡ QUVIB O'TISH! +150
+        </div>
+
+        <!-- Spidometr & Uzatmalar -->
+        <div class="speed-cluster">
+            <div class="speed-number" id="hudSpeedBig">0</div>
+            <div class="speed-unit-sub">KM / SOAT</div>
+            <div class="gear-badge" id="hudGear">D1</div>
+        </div>
+    </div>
+
+    <!-- Mobil / Sensorli Ekran Tugmalari -->
+    <div class="touch-bar">
+        <div class="steer-buttons">
+            <button class="t-btn" id="tLeft">◀</button>
+            <button class="t-btn" id="tRight">▶</button>
+        </div>
+        <div class="pedal-buttons">
+            <button class="t-btn t-brake" id="tBrake">🛑</button>
+            <button class="t-btn" id="tGas">⚡</button>
+            <button class="t-btn t-nitro" id="tNitro">🔥</button>
+        </div>
+    </div>
+
+    <!-- Pastki Boshqaruv Qo'llanmasi -->
+    <div class="bottom-controls">
+        <div class="keys-guide">
+            <div class="guide-item">
+                <kbd>W</kbd> yoki <kbd>↑</kbd> Gaz (Tezlanish)
+            </div>
+            <div class="guide-item">
+                <kbd>A</kbd><kbd>D</kbd> yoki <kbd>←</kbd><kbd>→</kbd> Chap / O'ng
+            </div>
+            <div class="guide-item">
+                <kbd>S</kbd> yoki <kbd>↓</kbd> Tormoz
+            </div>
+            <div class="guide-item">
+                <kbd>SPACE</kbd> yoki <kbd>SHIFT</kbd> Nitro (NOS)
+            </div>
+            <div class="guide-item">
+                <kbd>H</kbd> Signal (Horn)
+            </div>
+        </div>
+
+        <button class="btn-primary" id="btnRestart">
+            🔄 Yangi Poyga
+        </button>
+    </div>
+
+    <!-- Garaj Modali (Mashina tanlash) -->
+    <div class="modal-overlay" id="garageModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>🚗 Garaj - Superkarni Tanlang</h3>
+                <button class="close-btn" id="closeGarage">&times;</button>
+            </div>
+
+            <div class="cars-grid">
+                <!-- Ferrari -->
+                <div class="car-card selected" data-car="ferrari">
+                    <div class="car-card-icon">🏎️</div>
+                    <div class="car-card-name">Ferrari GT</div>
+                    <div class="car-card-stat">Tezlik: 280 km/h | Boshqaruv: ⭐⭐⭐⭐</div>
+                </div>
+
+                <!-- Lamborghini -->
+                <div class="car-card" data-car="lambo">
+                    <div class="car-card-icon">🟡</div>
+                    <div class="car-card-name">Lamborghini SV</div>
+                    <div class="car-card-stat">Tezlik: 320 km/h | Nitro: ⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <!-- Cyber Neon -->
+                <div class="car-card" data-car="cyber">
+                    <div class="car-card-icon">⚡</div>
+                    <div class="car-card-name">Cyber Neon GT</div>
+                    <div class="car-card-stat">Tezlik: 300 km/h | O'ta yengil boshqaruv</div>
+                </div>
+
+                <!-- Police -->
+                <div class="car-card" data-car="police">
+                    <div class="car-card-icon">🚓</div>
+                    <div class="car-card-name">Police Interceptor</div>
+                    <div class="car-card-stat">Zirh: ⭐⭐⭐⭐⭐ | Sirenali superkar</div>
+                </div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: #94a3b8; text-align: center;">
+                Mashinani tanlang va oyna ustidagi yopish tugmasini bosing!
+            </p>
+        </div>
+    </div>
+
+    <!-- O'yin Tugashi Modali (Game Over) -->
+    <div class="modal-overlay" id="gameOverModal">
+        <div class="modal-card" style="text-align: center;">
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #ef4444; margin-bottom: 8px;">
+                💥 AVARIYA!
+            </h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">
+                Mashina jiddiy shikastlandi!
+            </p>
+
+            <div style="background: rgba(255,255,255,0.06); padding: 15px; border-radius: 16px; margin-bottom: 25px; text-align: left; font-family: 'Orbitron', monospace; font-size: 0.95rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #94a3b8;">Umumiy Ball:</span>
+                    <span id="finalScore" style="color: #ffffff; font-weight: bold;">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #94a3b8;">Bosib O'tilgan Masofa:</span>
+                    <span id="finalDistance" style="color: #06b6d4;">0.00 km</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #94a3b8;">Yig'ilgan Tangalar:</span>
+                    <span id="finalCoins" style="color: #fbbf24;">0 🪙</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                    <span style="color: #94a3b8;">Eng Yaxshi Natija (Rekord):</span>
+                    <span id="finalHighScore" style="color: #38ef7d;">0</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="btnModalRestart" style="margin: 0 auto; padding: 12px 35px; font-size: 1.1rem;">
+                🔄 Qayta Boshlash
+            </button>
+        </div>
+    </div>
+
+    <!-- Ovoz va O'yin Skriptlari -->
+    <script src="car_audio.js"></script>
+    <script src="car_game.js"></script>
+</body>
+</html>

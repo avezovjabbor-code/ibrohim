@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futbol Chempionati - Botga qarshi o'yin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+</head>
+<body>
+
+    <!-- Yuqori menyu & Header -->
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">⚽</span>
+            <div class="logo-title">
+                <h1>FUTBOL ARENA</h1>
+                <p>O'zbekiston vs Sun'iy Intellekt (Bot)</p>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <a href="car.html" class="btn-icon" style="text-decoration: none; background: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.4);" title="Mashina poygasi">
+                🏎️ Mashina Poygasi
+            </a>
+            <button class="btn-icon" id="btnSound" title="Ovozni yoqish/o'chirish">
+                🔊 Ovoz: Yoqilgan
+            </button>
+            <button class="btn-icon" id="btnSettings" title="Sozlamalar">
+                ⚙️ Sozlamalar
+            </button>
+            <button class="btn-icon" id="btnFullscreen" title="To'liq ekran">
+                ⛶ To'liq ekran
+            </button>
+        </div>
+    </header>
+
+    <!-- O'yin rejimini tanlash paneli -->
+    <div class="mode-bar">
+        <button class="mode-btn active" id="modeMatch">
+            🏟️ 1 vs 1 Katta Match
+        </button>
+        <button class="mode-btn" id="modePenalty">
+            🎯 Penaltilar Seriyasi
+        </button>
+    </div>
+
+    <!-- Hisob doskasi (Scoreboard) -->
+    <div class="scoreboard-container">
+        <!-- P1: Siz -->
+        <div class="team-badge">
+            <div class="team-avatar avatar-p1">🇺🇿</div>
+            <div class="team-info">
+                <span class="team-name">SIZ (MOVIY)</span>
+                <span class="team-sub">#10 Hujumchi</span>
+            </div>
+        </div>
+
+        <!-- O'rtadagi Hisob & Taymer -->
+        <div class="match-center">
+            <div class="score-display">
+                <span id="scoreP1">0</span>
+                <span>:</span>
+                <span id="scoreP2">0</span>
+            </div>
+            <div class="match-time" id="matchTime">0'</div>
+            <div class="penalty-dots" id="penaltyDots" style="display: none;"></div>
+        </div>
+
+        <!-- P2: Bot -->
+        <div class="team-badge team-p2">
+            <div class="team-info" style="text-align: right;">
+                <span class="team-name" id="p2NameLabel">BOT (QIZIL)</span>
+                <span class="team-sub">Aqlli AI Himoyachi</span>
+            </div>
+            <div class="team-avatar avatar-p2">🤖</div>
+        </div>
+    </div>
+
+    <!-- O'yin Stadioni (Canvas) -->
+    <div class="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Gol banneri (Animatsiya) -->
+        <div class="goal-banner" id="goalBanner">
+            <h2>G O O O L !</h2>
+            <p id="goalText">Ajoyib zarba!</p>
+        </div>
+
+        <!-- Jonli o'yinchi ko'rsatkichlari (Stamina & Shot Power) -->
+        <div class="hud-overlay">
+            <div class="player-stats">
+                <div class="stat-label">
+                    <span>⚡ TEZLIK (STAMINA)</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill fill-stamina" id="staminaFill"></div>
+                </div>
+
+                <div class="stat-label" style="margin-top: 4px;">
+                    <span>🔥 ZARBA KUCHI (SHOT)</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill fill-power" id="powerFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobil / Sensorli ekranlar uchun virtual boshqaruv -->
+    <div class="touch-controls">
+        <div class="touch-dpad">
+            <div></div>
+            <button class="touch-btn" id="touchUp">▲</button>
+            <div></div>
+            <button class="touch-btn" id="touchLeft">◀</button>
+            <div></div>
+            <button class="touch-btn" id="touchRight">▶</button>
+            <div></div>
+            <button class="touch-btn" id="touchDown">▼</button>
+            <div></div>
+        </div>
+        <div class="touch-actions">
+            <button class="action-circle-btn sprint-btn" id="touchSprint">⚡ YUGUR</button>
+            <button class="action-circle-btn" id="touchKick">⚽ TEP</button>
+        </div>
+    </div>
+
+    <!-- Pastki boshqaruv va qo'llanma paneli -->
+    <div class="bottom-bar">
+        <div class="keys-legend">
+            <div class="key-badge">
+                <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> yoki <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> Harakat
+            </div>
+            <div class="key-badge">
+                <kbd>SPACE</kbd> yoki <kbd>K</kbd> Zarba (bosib tursa kuchayadi)
+            </div>
+            <div class="key-badge">
+                <kbd>SHIFT</kbd> Sprint (Tezlanish)
+            </div>
+            <div class="key-badge">
+                <kbd>SICHQONCHA</kbd> Penaltida nishonga olib tepish
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-primary" id="btnRestart">
+                🔄 Yangi O'yin
+            </button>
+        </div>
+    </div>
+
+    <!-- Sozlamalar modali -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>O'yin Sozlamalari</h3>
+                <button class="close-btn" id="closeSettings">&times;</button>
+            </div>
+
+            <div class="setting-group">
+                <label>BOTNING QIYINLIK DARAJASI:</label>
+                <div class="setting-options">
+                    <button class="option-btn diff-btn" data-diff="easy">Oson</button>
+                    <button class="option-btn diff-btn active" data-diff="medium">O'rtacha</button>
+                    <button class="option-btn diff-btn" data-diff="hard">Professional</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>O'YINCHI TURI:</label>
+                <div class="setting-options">
+                    <button class="option-btn player-mode-btn active" data-players="1">Siz vs Bot (1P)</button>
+                    <button class="option-btn player-mode-btn" data-players="2">2 O'yinchi (Do'st bilan)</button>
+                </div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-top: 15px;">
+                💡 <b>Eslatma:</b> 2 O'yinchi rejimida 1-o'yinchi <code>WASD + Space</code>, 2-o'yinchi esa Bot o'rniga o'ynaydi.
+            </p>
+        </div>
+    </div>
+
+    <!-- O'yin tugash modali -->
+    <div class="modal-overlay" id="gameOverModal">
+        <div class="modal-card" style="text-align: center;">
+            <h2 id="modalTitle" style="font-size: 2.2rem; margin-bottom: 10px;">G'ALABA! 🏆</h2>
+            <p id="modalDesc" style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px;">Siz g'olib bo'ldingiz!</p>
+            <button class="btn-primary" id="modalRestartBtn" style="margin: 0 auto; padding: 12px 35px; font-size: 1.1rem;">
+                🔄 Qayta o'ynash
+            </button>
+        </div>
+    </div>
+
+    <!-- Skriptlar -->
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
